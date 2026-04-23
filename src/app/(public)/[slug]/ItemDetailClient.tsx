@@ -61,6 +61,7 @@ export default function ItemDetailClient({ item }: ItemDetailClientProps) {
       ungrouped.push(feat);
     }
   }
+  const groupedEntries = Object.entries(groupedFeatures);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 md:py-20">
@@ -186,9 +187,33 @@ export default function ItemDetailClient({ item }: ItemDetailClientProps) {
             Características
           </h2>
 
-          {/* Ungrouped features */}
+          {/* Grouped features */}
+          {groupedEntries.length > 0 && (
+            <div className={cn("grid gap-8", groupedEntries.length >= 2 && "md:grid-cols-2")}>
+              {groupedEntries.map(([group, feats]) => (
+                <section key={group}>
+                  <h3
+                    className="text-lg font-bold mb-4 text-ldc-coral"
+                    style={{ fontFamily: "DynaPuff, sans-serif" }}
+                  >
+                    {group}
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {feats.map((feat, idx) => (
+                      <div key={idx} className="bg-muted/50 rounded-xl p-5 border border-border">
+                        <h4 className="font-semibold mb-1 text-sm">{feat.title}</h4>
+                        <p className="text-sm text-muted-foreground">{feat.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
+
+          {/* Ungrouped features (below grouped, lower priority) */}
           {ungrouped.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {ungrouped.map((feat, idx) => (
                 <div key={idx} className="bg-muted/50 rounded-xl p-5 border border-border">
                   <h3 className="font-semibold mb-1 text-sm">{feat.title}</h3>
@@ -197,26 +222,6 @@ export default function ItemDetailClient({ item }: ItemDetailClientProps) {
               ))}
             </div>
           )}
-
-          {/* Grouped features */}
-          {Object.entries(groupedFeatures).map(([group, feats]) => (
-            <div key={group} className="mb-8">
-              <h3
-                className="text-lg font-bold mb-4 text-ldc-coral"
-                style={{ fontFamily: "DynaPuff, sans-serif" }}
-              >
-                {group}
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {feats.map((feat, idx) => (
-                  <div key={idx} className="bg-muted/50 rounded-xl p-5 border border-border">
-                    <h4 className="font-semibold mb-1 text-sm">{feat.title}</h4>
-                    <p className="text-sm text-muted-foreground">{feat.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </AnimatedElement>
       )}
 
