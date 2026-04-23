@@ -1,0 +1,159 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ── Tipografías locales ────────────────────────────────────────── */
+@font-face {
+  font-family: "DynaPuff";
+  src: url("/fonts/DynaPuff-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/Nunito-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Avenir";
+  src: url("/fonts/Avenir Next.ttc") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* ── Tokens de diseño (CSS variables) ──────────────────────────── */
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Paleta de marca */
+  --ldc-base: #f8f5eb;
+  --ldc-coral: #ea6851;
+  --ldc-verde: #9bbcbb;
+  --ldc-amarillo: #f6b037;
+  --ldc-azul: #93aec3;
+  --ldc-rosa: #f2b7ac;
+
+  /* shadcn/ui tokens mapeados a la marca */
+  --background: #f8f5eb;
+  --foreground: #2a2218;
+
+  --card: #ffffff;
+  --card-foreground: #2a2218;
+
+  --popover: #ffffff;
+  --popover-foreground: #2a2218;
+
+  --primary: #ea6851;
+  --primary-foreground: #ffffff;
+
+  --secondary: #9bbcbb;
+  --secondary-foreground: #2a2218;
+
+  --muted: #f0ede0;
+  --muted-foreground: #6b6252;
+
+  --accent: #f6b037;
+  --accent-foreground: #2a2218;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #e2dccf;
+  --input: #e2dccf;
+  --ring: #ea6851;
+
+  --radius: 0.75rem;
+
+  /* Sidebar admin */
+  --sidebar: #2a2218;
+  --sidebar-foreground: #f8f5eb;
+  --sidebar-border: #3d3224;
+  --sidebar-accent: #ea6851;
+}
+
+/* ── Configuración del tema Tailwind v4 ─────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Paleta de marca como utilidades */
+  --color-ldc-base: var(--ldc-base);
+  --color-ldc-coral: var(--ldc-coral);
+  --color-ldc-verde: var(--ldc-verde);
+  --color-ldc-amarillo: var(--ldc-amarillo);
+  --color-ldc-azul: var(--ldc-azul);
+  --color-ldc-rosa: var(--ldc-rosa);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+
+  --font-heading: "DynaPuff", "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Nunito", "Avenir", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nunito", "Avenir", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ── Reset y estilos base ───────────────────────────────────────── */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+/* ── Swiper custom styles ───────────────────────────────────────── */
+.swiper-pagination-bullet-active {
+  background: var(--ldc-coral) !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--ldc-coral) !important;
+}
