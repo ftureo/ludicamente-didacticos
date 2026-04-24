@@ -38,6 +38,7 @@ export default function FeaturedSection({ items }: FeaturedSectionProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item, idx) => {
+          console.log(item);
           const accentClass = ACCENT_BG[item.accentColor ?? "primary"];
           return (
             <AnimatedElement key={item._id.toString()} delay={idx * 0.1}>
@@ -71,7 +72,7 @@ export default function FeaturedSection({ items }: FeaturedSectionProps) {
                     </span>
                   )}
                   <Button asChild className="bg-ldc-coral hover:bg-ldc-coral/90 text-white min-h-[44px]">
-                    <Link href={`/${item.slug}`}>Descubrilo</Link>
+                    <Link href={`/${item.slug}`}>{item.heroSlide?.ctaText}</Link>
                   </Button>
                 </div>
               </div>

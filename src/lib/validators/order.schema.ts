@@ -17,6 +17,11 @@ export const createOrderSchema = z.object({
   comprobanteUrl: z.string().url().optional(),
   items: z.array(orderItemSchema).min(1, "El carrito está vacío"),
   total: z.number().min(0),
+  couponCode: z
+    .string()
+    .regex(/^[A-Z0-9]+$/, "Código de cupón inválido")
+    .optional(),
+  discountAmount: z.number().min(0).optional(),
 });
 
 export const updateOrderStatusSchema = z.object({

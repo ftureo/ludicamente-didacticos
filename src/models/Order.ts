@@ -18,7 +18,11 @@ export interface IOrder {
   comentario?: string;
   comprobanteUrl?: string;
   items: IOrderItem[];
+  /** Suma de ítems antes de descuentos (si falta en documentos viejos, se asume igual a `total` sin cupón). */
+  subtotal?: number;
   total: number;
+  couponCode?: string;
+  discountAmount?: number;
   status: OrderStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -53,7 +57,10 @@ const OrderSchema = new Schema<IOrderDocument>(
     comentario: { type: String, maxlength: 1000, trim: true },
     comprobanteUrl: { type: String, trim: true },
     items: { type: [OrderItemSchema], required: true },
+    subtotal: { type: Number, min: 0 },
     total: { type: Number, required: true, min: 0 },
+    couponCode: { type: String, trim: true, uppercase: true },
+    discountAmount: { type: Number, min: 0 },
     status: {
       type: String,
       enum: ["nuevo", "en-proceso", "finalizado", "entregado"],

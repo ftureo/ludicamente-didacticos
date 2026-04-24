@@ -157,3 +157,22 @@ h6 {
 .swiper-button-prev {
   color: var(--ldc-coral) !important;
 }
+
+/* Home hero: pagination sits absolute; reserve space + nudge so bullets don’t hug the slide edge */
+.hero-carousel.swiper {
+  padding-bottom: clamp(2.25rem, 6vw, 3.5rem);
+  box-sizing: border-box;
+}
+
+.hero-carousel .swiper-pagination {
+  bottom: clamp(0.5rem, 2vw, 1rem) !important;
+  padding: 0.5rem 0 0.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.hero-carousel .swiper-pagination-bullet {
+  margin: 0 !important;
+}

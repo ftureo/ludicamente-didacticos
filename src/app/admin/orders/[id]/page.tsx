@@ -5,6 +5,7 @@ import { orderRepository } from "@/lib/repositories/order.repository";
 import OrderStatusSelector from "@/components/admin/OrderStatusSelector";
 import Image from "next/image";
 import type { OrderStatus } from "@/models/Order";
+import { getOrderMonetaryBreakdown } from "@/lib/order-totals";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
@@ -13,6 +14,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   await connectDB();
   const order = await orderRepository.findById(id);
   if (!order) notFound();
+
+  const { subtotal, discount, finalTotal } = getOrderMonetaryBreakdown(order);
 
   return (
     <div className="max-w-2xl">
@@ -97,9 +100,27 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               </div>
             ))}
           </div>
-          <div className="flex justify-between pt-3 border-t border-border font-bold">
-            <span>Total</span>
-            <span>${order.total.toLocaleString("es-AR")}</span>
+          <div className="space-y-2 pt-3 border-t border-border text-sm">
+            <div className="flex justify-between text-muted-foreground">
+              <span>Subtotal (productos)</span>
+              <span>${subtotal.toLocaleString("es-AR")}</span>
+            </div>
+            {order.couponCode && (
+              <div className="flex justify-between text-muted-foreground">
+                <span>
+                  Cupón <span className="font-mono">{order.couponCode}</span>
+                </span>
+                <span className={discount > 0 ? "text-ldc-verde font-medium" : ""}>
+                  {discount > 0
+                    ? `-$${discount.toLocaleString("es-AR")}`
+                    : "Beneficio sin descuento en monto (ej. envío)"}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between font-bold text-base pt-1">
+              <span>Total a pagar</span>
+              <span className="text-ldc-coral">${finalTotal.toLocaleString("es-AR")}</span>
+            </div>
           </div>
         </section>
       </div>
