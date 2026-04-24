@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import type { OrderStatus } from "@/models/Order";
+import { getOrderMonetaryBreakdown } from "@/lib/order-totals";
 
 export default async function AdminOrdersPage() {
   await connectDB();
@@ -26,14 +27,17 @@ export default async function AdminOrdersPage() {
               <TableHead>Email</TableHead>
               <TableHead>WhatsApp</TableHead>
               <TableHead>Items</TableHead>
-              <TableHead>Total</TableHead>
+              <TableHead>Importe</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order) => (
+            {orders.map((order) => {
+              const { subtotal, discount, finalTotal } = getOrderMonetaryBreakdown(order);
+              const hasCoupon = Boolean(order.couponCode);
+              return (
               <TableRow key={order._id.toString()} className="hover:bg-muted/50">
                 <TableCell className="font-medium">
                   {order.nombre} {order.apellido}
@@ -41,8 +45,21 @@ export default async function AdminOrdersPage() {
                 <TableCell className="text-sm text-muted-foreground">{order.email}</TableCell>
                 <TableCell className="text-sm">{order.whatsapp}</TableCell>
                 <TableCell className="text-sm">{order.items.length}</TableCell>
-                <TableCell className="font-medium">
-                  ${order.total.toLocaleString("es-AR")}
+                <TableCell>
+                  <div className="font-semibold">${finalTotal.toLocaleString("es-AR")}</div>
+                  {(discount > 0 || hasCoupon) && (
+                    <div className="text-xs text-muted-foreground mt-0.5 space-y-0.5">
+                      {discount > 0 && (
+                        <div>
+                          Subt. ${subtotal.toLocaleString("es-AR")} · Desc. -$
+                          {discount.toLocaleString("es-AR")}
+                        </div>
+                      )}
+                      {hasCoupon && (
+                        <div className="font-mono">{order.couponCode}</div>
+                      )}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <OrderStatusBadge status={order.status as OrderStatus} />
@@ -58,7 +75,8 @@ export default async function AdminOrdersPage() {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))}
+              );
+            })}
             {orders.length === 0 && (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
