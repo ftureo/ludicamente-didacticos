@@ -4,6 +4,9 @@ import type { CreateOrderInput } from "@/lib/validators/order.schema";
 
 const TOTAL_TOLERANCE = 0.01;
 
+/** Campos del pedido que no se copian del cliente: total y descuento se recalculan; cupón se valida aparte. */
+type OrderCreateBase = Omit<CreateOrderInput, "couponCode" | "discountAmount" | "total">;
+
 export type PreparedOrderCreate = Omit<CreateOrderInput, "total" | "couponCode" | "discountAmount"> & {
   subtotal: number;
   total: number;
@@ -22,10 +25,15 @@ export async function prepareOrderForCreate(
     };
   }
 
-  const { couponCode, discountAmount: _ignoredClientDiscount, total: _t, ...base } = data;
+  const couponCode = data.couponCode;
+  const base = { ...data } as CreateOrderInput & Record<string, unknown>;
+  Reflect.deleteProperty(base, "couponCode");
+  Reflect.deleteProperty(base, "discountAmount");
+  Reflect.deleteProperty(base, "total");
+  const orderBase = base as OrderCreateBase;
 
   if (couponCode) {
-    const validation = await validateCoupon(couponCode, base.email, subtotal);
+    const validation = await validateCoupon(couponCode, data.email, subtotal);
     if (!validation.valid) {
       return { ok: false, error: validation.error ?? "Cupón inválido" };
     }
@@ -34,7 +42,7 @@ export async function prepareOrderForCreate(
     return {
       ok: true,
       payload: {
-        ...base,
+        ...orderBase,
         subtotal,
         total,
         couponCode,
@@ -46,7 +54,7 @@ export async function prepareOrderForCreate(
   return {
     ok: true,
     payload: {
-      ...base,
+      ...orderBase,
       subtotal,
       total: subtotal,
     },
