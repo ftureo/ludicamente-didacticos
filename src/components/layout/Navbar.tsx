@@ -30,7 +30,7 @@ export default function Navbar() {
                 alt={siteConfig.branding.name}
                 width={140}
                 height={48}
-                className="h-10 w-auto object-contain"
+                className="h-40 w-auto object-contain"
                 priority
               />
             ) : (
