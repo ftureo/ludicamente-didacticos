@@ -11,7 +11,7 @@ import { useCart } from "@/hooks/useCart";
 import { createOrderAction } from "@/actions/order.actions";
 import { toast } from "sonner";
 import Link from "next/link";
-import { ShoppingBag, ArrowLeft, Copy, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Copy, CheckCircle2, Tag, X, Truck } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 interface FormState {
@@ -21,6 +21,17 @@ interface FormState {
   whatsapp: string;
   comentario: string;
   comprobanteUrl: string;
+}
+
+interface CouponResult {
+  valid: boolean;
+  discountAmount: number;
+  type: "percentage" | "fixed" | "free_shipping";
+  value: number;
+}
+
+function sanitizeCouponCode(raw: string): string {
+  return raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 }
 
 export default function CheckoutClient() {
@@ -38,8 +49,68 @@ export default function CheckoutClient() {
   });
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  const [couponCode, setCouponCode] = useState("");
+  const [couponResult, setCouponResult] = useState<CouponResult | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
+    // if the email changes after applying a coupon, clear it so re-validation is needed
+    if (e.target.name === "email" && couponResult) {
+      setCouponResult(null);
+      setCouponError(null);
+    }
+  }
+
+  function handleCouponCodeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const sanitized = sanitizeCouponCode(e.target.value);
+    setCouponCode(sanitized);
+    if (couponResult) {
+      setCouponResult(null);
+      setCouponError(null);
+    }
+  }
+
+  function clearCoupon() {
+    setCouponCode("");
+    setCouponResult(null);
+    setCouponError(null);
+  }
+
+  async function handleApplyCoupon() {
+    if (!couponCode || couponCode.length < 3) {
+      setCouponError("Ingresá un código válido");
+      return;
+    }
+    if (!form.email) {
+      setCouponError("Completá tu email primero para validar el cupón");
+      return;
+    }
+
+    setCouponLoading(true);
+    setCouponError(null);
+
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponCode, userId: form.email, cartTotal: total }),
+      });
+      const json = await res.json() as { success: boolean; data?: CouponResult; error?: string };
+
+      if (json.success && json.data) {
+        setCouponResult(json.data);
+        setCouponError(null);
+      } else {
+        setCouponError(json.error ?? "Cupón inválido");
+        setCouponResult(null);
+      }
+    } catch {
+      setCouponError("Error al validar el cupón");
+    } finally {
+      setCouponLoading(false);
+    }
   }
 
   function copyToClipboard(value: string, field: string) {
@@ -73,6 +144,10 @@ export default function CheckoutClient() {
       toast.error("Tu carrito está vacío");
       return;
     }
+    if (couponCode.length > 0 && !couponResult?.valid) {
+      toast.error("Presioná Aplicar para validar el cupón o vaciá el campo antes de finalizar.");
+      return;
+    }
     setLoading(true);
 
     const result = await createOrderAction({
@@ -87,6 +162,9 @@ export default function CheckoutClient() {
         price: i.price,
       })),
       total,
+      ...(couponResult?.valid && couponCode
+        ? { couponCode, discountAmount: couponResult.discountAmount }
+        : {}),
     });
 
     setLoading(false);
@@ -99,6 +177,10 @@ export default function CheckoutClient() {
       toast.error(result.error ?? "Error al procesar el pedido");
     }
   }
+
+  const finalTotal = couponResult?.valid
+    ? Math.max(0, total - couponResult.discountAmount)
+    : total;
 
   if (count === 0 && !submitted) {
     return (
@@ -138,6 +220,7 @@ export default function CheckoutClient() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 items-start">
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Personal data */}
           <div className="p-6 rounded-2xl border border-border bg-card space-y-5">
             <h2 className="font-semibold text-base">Tus datos</h2>
             <p className="text-sm text-muted-foreground">
@@ -207,6 +290,68 @@ export default function CheckoutClient() {
                 placeholder="¿Alguna consulta o indicación especial?"
               />
             </div>
+          </div>
+
+          {/* Coupon */}
+          <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+            <div className="flex items-center gap-2">
+              <Tag className="w-4 h-4 text-muted-foreground" />
+              <h2 className="font-semibold text-base">¿Tenés un cupón?</h2>
+            </div>
+
+            {couponResult?.valid ? (
+              <div className="flex items-center gap-3 p-3 bg-ldc-verde/10 rounded-xl border border-ldc-verde/30">
+                <CheckCircle2 className="w-5 h-5 text-ldc-verde shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-ldc-verde font-mono">{couponCode}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {couponResult.type === "free_shipping"
+                      ? "Envío gratis aplicado"
+                      : `Descuento: -$${couponResult.discountAmount.toLocaleString("es-AR")}`}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={clearCoupon}
+                  className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                  aria-label="Quitar cupón"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    value={couponCode}
+                    onChange={handleCouponCodeChange}
+                    placeholder="VERANO20"
+                    maxLength={20}
+                    className="font-mono uppercase flex-1"
+                    aria-label="Código de cupón"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleApplyCoupon}
+                    disabled={couponLoading || !couponCode}
+                    className="shrink-0"
+                  >
+                    {couponLoading ? "Validando..." : "Aplicar"}
+                  </Button>
+                </div>
+                {couponError && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <X className="w-3 h-3" />
+                    {couponError}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Solo letras y números. Los caracteres especiales se eliminan automáticamente.
+                  Para que el descuento cuente en el pedido, presioná Aplicar antes de enviar.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Transferencia bancaria */}
@@ -308,9 +453,38 @@ export default function CheckoutClient() {
             ))}
           </div>
 
+          <div className="space-y-2 pt-2">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Subtotal</span>
+              <span>${total.toLocaleString("es-AR")}</span>
+            </div>
+
+            {couponResult?.valid && (
+              <>
+                {couponResult.type === "free_shipping" ? (
+                  <div className="flex justify-between text-sm text-ldc-verde">
+                    <span className="flex items-center gap-1">
+                      <Truck className="w-3.5 h-3.5" />
+                      Envío gratis
+                    </span>
+                    <span>—</span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-sm text-ldc-verde">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3.5 h-3.5" />
+                      Cupón {couponCode}
+                    </span>
+                    <span>-${couponResult.discountAmount.toLocaleString("es-AR")}</span>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
           <div className="pt-4 border-t border-border flex justify-between items-center font-bold text-lg">
             <span>Total</span>
-            <span className="text-ldc-coral">${total.toLocaleString("es-AR")}</span>
+            <span className="text-ldc-coral">${finalTotal.toLocaleString("es-AR")}</span>
           </div>
         </div>
       </div>
