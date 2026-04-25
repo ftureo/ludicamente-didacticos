@@ -38,13 +38,12 @@ export const siteConfig = {
 
     payment: {
         transferencia: {
-            cbu: "0000000000000000000000",
-            titular: "Lúdicamente Didácticos",
-            banco: "Banco / Billetera digital",
-            alias: "LUDICAMENTE.DIDACTICOS",
+            cbu: "0000003100079163271327",
+            titular: "Victoria Zoppi",
+            banco: "MERCADOPAGO",
+            alias: "LUDICAMENTE.CH",
         },
     },
-
     navigation: {
         main: [
             { label: "Home", href: "/" },
@@ -111,10 +110,11 @@ export const siteConfig = {
                 title: "Contacto",
                 items: [
                     {
-                        label: "hola@ludicamente.com",
-                        href: "mailto:hola@ludicamente.com",
+                        label: "ludicamentedidacticos@gmail.com",
+                        href: "mailto:ludicamentedidacticos@gmail.com",
                     },
-                    { label: "+54 9 11 0000-0000", href: "tel:+5491100000000" },
+                    // 2346 - 508914
+                    { label: "+54 9 2346 508914", href: "tel:+5492346508914" },
                     { label: "Buenos Aires, Argentina", href: "#" },
                 ],
             },
@@ -125,7 +125,7 @@ export const siteConfig = {
                         label: "Instagram",
                         href: "https://instagram.com/ludicamente.didacticos",
                     },
-                    { label: "WhatsApp", href: "https://wa.me/5491100000000" },
+                    { label: "WhatsApp", href: "https://wa.me/5492346508914" },
                 ],
             },
             {
@@ -145,7 +145,7 @@ export const siteConfig = {
         name: "Lúdicamente Didácticos",
         role: "Licenciada en Psicopedagogía",
         description:
-            "Especializada en desarrollo psicomotriz, aprendizaje adaptado y educación basada en el juego.",
+            "¡Hola! Soy Victoria Zoppi, Licenciada en Psicopedagogía.\n Me desempeño en el ámbito educativo, acompañando las trayectorias escolares de niños y niñas desde una mirada integral, respetuosa y personalizada. Próximamente también ampliaré mi trabajo al ámbito clínico, sumando nuevos espacios de acompañamiento profesional.\n\nActualmente me encuentro realizando una especialización en Intervención y Estimulación Temprana, con el objetivo de seguir incorporando herramientas actualizadas para potenciar el desarrollo infantil desde los primeros años.\n\nAdemás, soy creadora de Lúdicamente, un proyecto nacido en noviembre de 2025 dedicado a ofrecer recursos, juegos y materiales didácticos pensados para consultorios, familias y escuelas. Mi propósito es acercar propuestas creativas y significativas que favorezcan el aprendizaje a través del juego. \n\n Actualmente me encuentro realizando una especialización en Intervención y Estimulación Temprana, con el objetivo de seguir incorporando herramientas actualizadas para potenciar el desarrollo infantil desde los primeros años. \n\nAdemás, soy creadora de Lúdicamente, un proyecto nacido en noviembre de 2025 dedicado a ofrecer recursos, juegos y materiales didácticos pensados para consultorios, familias y escuelas. Mi propósito es acercar propuestas creativas y significativas que favorezcan el aprendizaje a través del juego. ",
     },
 } as const;
 
