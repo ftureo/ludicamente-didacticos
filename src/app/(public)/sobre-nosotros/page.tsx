@@ -45,9 +45,11 @@ export default function SobreNosotrosPage() {
               {owner.role}
             </p>
 
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              {owner.description}
-            </p>
+            <div className="text-muted-foreground text-lg leading-relaxed space-y-6">
+              {owner.description.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
 
             <p className="text-muted-foreground leading-relaxed">
               En Lúdicamente Didácticos diseñamos materiales que ponen el juego

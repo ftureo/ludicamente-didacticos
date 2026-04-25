@@ -144,8 +144,12 @@ export const siteConfig = {
     owner: {
         name: "Lúdicamente Didácticos",
         role: "Licenciada en Psicopedagogía",
-        description:
-            "¡Hola! Soy Victoria Zoppi, Licenciada en Psicopedagogía.\n Me desempeño en el ámbito educativo, acompañando las trayectorias escolares de niños y niñas desde una mirada integral, respetuosa y personalizada. Próximamente también ampliaré mi trabajo al ámbito clínico, sumando nuevos espacios de acompañamiento profesional.\n\nActualmente me encuentro realizando una especialización en Intervención y Estimulación Temprana, con el objetivo de seguir incorporando herramientas actualizadas para potenciar el desarrollo infantil desde los primeros años.\n\nAdemás, soy creadora de Lúdicamente, un proyecto nacido en noviembre de 2025 dedicado a ofrecer recursos, juegos y materiales didácticos pensados para consultorios, familias y escuelas. Mi propósito es acercar propuestas creativas y significativas que favorezcan el aprendizaje a través del juego. \n\n Actualmente me encuentro realizando una especialización en Intervención y Estimulación Temprana, con el objetivo de seguir incorporando herramientas actualizadas para potenciar el desarrollo infantil desde los primeros años. \n\nAdemás, soy creadora de Lúdicamente, un proyecto nacido en noviembre de 2025 dedicado a ofrecer recursos, juegos y materiales didácticos pensados para consultorios, familias y escuelas. Mi propósito es acercar propuestas creativas y significativas que favorezcan el aprendizaje a través del juego. ",
+        description: [
+            "¡Hola! Soy Victoria Zoppi, Licenciada en Psicopedagogía.",
+            "Me desempeño en el ámbito educativo, acompañando las trayectorias escolares de niños y niñas desde una mirada integral, respetuosa y personalizada. Próximamente también ampliaré mi trabajo al ámbito clínico, sumando nuevos espacios de acompañamiento profesional.",
+            "Actualmente me encuentro realizando una especialización en Intervención y Estimulación Temprana, con el objetivo de seguir incorporando herramientas actualizadas para potenciar el desarrollo infantil desde los primeros años.",
+            "Además, soy creadora de Lúdicamente, un proyecto nacido en noviembre de 2025 dedicado a ofrecer recursos, juegos y materiales didácticos pensados para consultorios, familias y escuelas. Mi propósito es acercar propuestas creativas y significativas que favorezcan el aprendizaje a través del juego.",
+        ],
     },
 } as const;
 
